@@ -1,0 +1,69 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Rust
+target/
+**/*.rs.bk
+Cargo.lock
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+*.cover
+htmlcov/
+
+# Database
+*.db
+*.sqlite
+
+# Logs
+*.log
+logs/
+
+# Docker
+*.pid
+*.seed
+*.pid.lock
+
+# Hardhat
+cache/
+artifacts/
+typechain-types/
+
+# Misc
+.turbo
+.vercel
+

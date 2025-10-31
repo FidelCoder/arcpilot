@@ -1,0 +1,307 @@
+# ArcPilot - Cursor Development Rules
+
+## Project Overview
+ArcPilot is an AI-powered voice agent for autonomous USDC arbitrage and DeFi trading on Arc blockchain. Built for the "AI Agents on Arc with USDC" hackathon.
+
+**Key Technologies:**
+- **Backend**: Rust (primary), TypeScript, Python (AI/ML), Go (if needed)
+- **Frontend**: Next.js 14+ with TypeScript
+- **Blockchain**: Arc (EVM-compatible L1), Solidity smart contracts
+- **Wallet**: Thirdweb SDK for authentication and smart wallets
+- **Voice AI**: ElevenLabs for conversational interface
+- **Cross-chain**: Circle CCTP V2 for USDC transfers
+- **AI/ML**: Python for opportunity detection and risk scoring
+
+## Architecture Principles
+
+### 1. Microservices Architecture
+- **ai-engine/**: Rust service for opportunity detection and risk analysis
+- **voice-agent/**: TypeScript service integrating ElevenLabs
+- **blockchain-executor/**: Rust service for Arc blockchain interactions
+- **api-gateway/**: Rust/TypeScript API layer
+- **frontend/**: Next.js app with Thirdweb integration
+- **smart-contracts/**: Solidity contracts for Arc
+
+### 2. Blockchain-First Design
+- All transactions execute on **Arc testnet**
+- Use **USDC as native gas** (Arc's unique feature)
+- Smart contracts optimized for USDC operations
+- Support for cross-chain USDC via CCTP
+
+### 3. Code Quality Standards
+- **Rust**: Follow Rust 2021 edition best practices
+  - Use `async/await` with Tokio runtime
+  - Implement proper error handling with `Result<T, E>`
+  - Use `thiserror` for custom errors
+  - Write unit tests for all critical functions
+  - Use `cargo fmt` and `cargo clippy`
+  
+- **TypeScript**: Strict mode enabled
+  - Use TypeScript 5.0+ features
+  - Prefer functional programming patterns
+  - Implement proper type definitions
+  - No `any` types unless absolutely necessary
+  - Use ESLint and Prettier
+
+- **Python**: Type hints everywhere
+  - Use Python 3.11+
+  - Type hints for all function signatures
+  - Use `pydantic` for data validation
+  - Format with `black`, lint with `ruff`
+
+### 4. Security Requirements
+- **Never commit private keys or secrets**
+- Use environment variables for all sensitive data
+- Implement rate limiting on all API endpoints
+- Add circuit breakers for risk management
+- Validate all user inputs
+- Use Thirdweb's secure wallet infrastructure
+
+## Technology Stack Details
+
+### Rust Backend
+```toml
+# Key dependencies
+tokio = "1.35"          # Async runtime
+axum = "0.7"            # Web framework
+sqlx = "0.7"            # Database (PostgreSQL)
+ethers = "2.0"          # Ethereum/Arc interaction
+serde = "1.0"           # Serialization
+thiserror = "1.0"       # Error handling
+tracing = "0.1"         # Logging
+```
+
+### Frontend (Next.js + Thirdweb)
+```json
+{
+  "dependencies": {
+    "next": "^14.0.0",
+    "react": "^18.0.0",
+    "thirdweb": "^5.0.0",
+    "@thirdweb-dev/react": "^4.0.0",
+    "@thirdweb-dev/sdk": "^4.0.0",
+    "ethers": "^6.0.0",
+    "zustand": "^4.0.0",
+    "tailwindcss": "^3.0.0"
+  }
+}
+```
+
+### Smart Contracts
+- Solidity 0.8.20+
+- OpenZeppelin contracts for security
+- Hardhat for development and testing
+- Deploy to Arc testnet
+
+## Development Workflow
+
+### File Organization
+```
+arcpilot/
+├── ai-engine/              # Rust: AI decision engine
+│   ├── src/
+│   │   ├── main.rs
+│   │   ├── models/         # ML model integration
+│   │   ├── opportunities/  # Arbitrage detection
+│   │   └── risk/           # Risk scoring
+│   ├── Cargo.toml
+│   └── tests/
+├── voice-agent/            # TypeScript: ElevenLabs integration
+│   ├── src/
+│   │   ├── index.ts
+│   │   ├── elevenlabs/     # Voice AI client
+│   │   └── commands/       # Command processing
+│   └── package.json
+├── blockchain-executor/    # Rust: Arc blockchain ops
+│   ├── src/
+│   │   ├── main.rs
+│   │   ├── arc/            # Arc client
+│   │   ├── cctp/           # Cross-chain transfers
+│   │   └── contracts/      # Contract interactions
+│   └── Cargo.toml
+├── api-gateway/            # Rust: API layer
+│   ├── src/
+│   │   ├── main.rs
+│   │   ├── routes/
+│   │   └── middleware/
+│   └── Cargo.toml
+├── frontend/               # Next.js + Thirdweb
+│   ├── app/
+│   ├── components/
+│   ├── lib/
+│   │   └── thirdweb.ts     # Thirdweb config
+│   └── package.json
+├── smart-contracts/        # Solidity
+│   ├── contracts/
+│   │   ├── ArbitrageExecutor.sol
+│   │   └── USDCVault.sol
+│   ├── scripts/
+│   └── hardhat.config.ts
+├── python-ml/              # Python: ML models
+│   ├── models/
+│   ├── training/
+│   └── requirements.txt
+├── docker-compose.yml
+├── .env.example
+└── README.md
+```
+
+### Git Workflow
+- **main**: Production-ready code
+- **develop**: Integration branch
+- Feature branches: `feature/voice-agent`, `feature/arc-integration`
+- Commit format: `type(scope): description`
+  - Examples: `feat(voice): add ElevenLabs integration`
+  - Types: feat, fix, docs, refactor, test, chore
+
+### Environment Variables
+```bash
+# Arc Blockchain
+ARC_RPC_URL=https://testnet-rpc.arcblockchain.com
+ARC_CHAIN_ID=12345
+USDC_CONTRACT_ADDRESS=0x...
+
+# Thirdweb
+THIRDWEB_CLIENT_ID=your_client_id
+THIRDWEB_SECRET_KEY=your_secret_key
+
+# ElevenLabs
+ELEVENLABS_API_KEY=your_api_key
+ELEVENLABS_VOICE_ID=your_voice_id
+
+# Circle CCTP
+CCTP_CONTRACT_ADDRESS=0x...
+
+# Database
+DATABASE_URL=postgresql://user:pass@localhost/arcpilot
+
+# API
+API_PORT=8080
+JWT_SECRET=your_jwt_secret
+```
+
+## Feature Implementation Guidelines
+
+### 1. Voice Agent (ElevenLabs)
+- Use ElevenLabs Agents Platform for conversational AI
+- Implement natural language understanding for trading commands
+- Support commands:
+  - "Find arbitrage opportunities"
+  - "Execute trade with $100 USDC"
+  - "What's my portfolio balance?"
+  - "Show me risk metrics"
+- Add voice feedback for all actions
+
+### 2. Thirdweb Integration
+- Use Thirdweb Connect for wallet authentication
+- Support email, social logins, and wallet connections
+- Implement smart wallet features (gasless transactions, session keys)
+- Example:
+```typescript
+import { ThirdwebProvider, ConnectWallet } from "@thirdweb-dev/react";
+
+const App = () => (
+  <ThirdwebProvider
+    activeChain="arc-testnet"
+    clientId={process.env.THIRDWEB_CLIENT_ID}
+  >
+    <ConnectWallet />
+  </ThirdwebProvider>
+);
+```
+
+### 3. Arc Blockchain Integration
+- Connect to Arc testnet RPC
+- All gas fees paid in USDC
+- Display dollar-denominated gas costs
+- Use ethers.rs in Rust or ethers.js in TypeScript
+- Example Rust:
+```rust
+use ethers::prelude::*;
+
+let provider = Provider::<Http>::try_from(arc_rpc_url)?;
+let chain_id = provider.get_chainid().await?;
+```
+
+### 4. AI Arbitrage Detection
+- Scan DEX pools on Arc for price differences
+- Calculate profitability after gas costs
+- Risk scoring (0-100)
+- Real-time opportunity updates via WebSocket
+
+### 5. Cross-Chain USDC (CCTP)
+- Integrate Circle's CCTP V2
+- Support bridging USDC between Arc and other chains
+- Show estimated bridge time and fees
+
+### 6. Smart Contracts
+- ArbitrageExecutor: Execute multi-step trades
+- USDCVault: Manage user funds securely
+- Use OpenZeppelin's ReentrancyGuard, Pausable, Ownable
+- Optimize for gas efficiency
+
+## Testing Requirements
+
+### Unit Tests
+- Rust: `cargo test` (minimum 80% coverage)
+- TypeScript: Jest (minimum 70% coverage)
+- Python: pytest (minimum 75% coverage)
+
+### Integration Tests
+- Test Arc blockchain interactions on testnet
+- Test Thirdweb wallet flows
+- Test ElevenLabs API integration
+
+### E2E Tests
+- Full user journey: login → voice command → trade execution
+- Use Playwright for frontend E2E tests
+
+## Performance Guidelines
+- API response time: < 500ms for read operations
+- Voice command processing: < 2s end-to-end
+- Trade execution: < 10s on Arc testnet
+- Frontend: Lighthouse score > 90
+
+## Documentation Requirements
+- All public functions must have doc comments
+- README with setup instructions
+- Architecture diagram
+- API documentation (OpenAPI/Swagger)
+- User guide for voice commands
+
+## Hackathon Submission Checklist
+- [ ] Working prototype deployed
+- [ ] All transactions on Arc testnet
+- [ ] USDC used for gas fees demonstrated
+- [ ] Video demo (< 3 minutes)
+- [ ] GitHub repo public
+- [ ] README with clear setup instructions
+- [ ] Slide deck (10-15 slides)
+
+## Key Differentiators (Keep Focus)
+1. **Voice-first interface** - Most DeFi is keyboard-only
+2. **Arc-native with USDC gas** - Showcase Arc's innovation
+3. **AI learning from trades** - Not just rule-based
+4. **One-click onboarding** - Thirdweb smart wallets
+5. **Cross-chain arbitrage** - CCTP integration
+6. **Real-time risk scoring** - Build trust
+
+## DO NOT
+- ❌ Build CEX integrations (DEX only for MVP)
+- ❌ Use private keys directly (use Thirdweb)
+- ❌ Hardcode secrets in code
+- ❌ Skip error handling
+- ❌ Deploy to mainnet (testnet only for hackathon)
+- ❌ Copy code from SLEEK repo without adaptation
+
+## Resources
+- [Arc Documentation](https://docs.circle.com/arc)
+- [Thirdweb Docs](https://portal.thirdweb.com/)
+- [ElevenLabs API](https://elevenlabs.io/docs)
+- [Circle CCTP](https://developers.circle.com/stablecoins/docs/cctp-getting-started)
+- [Hackathon Guidelines](https://lablab.ai/event/ai-agents-on-arc-with-usdc)
+
+---
+
+**Remember**: Build for demo impact. Focus on the core experience that judges can see and interact with in 3 minutes.
+

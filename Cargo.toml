@@ -1,0 +1,72 @@
+[workspace]
+members = [
+    "ai-engine",
+    "blockchain-executor",
+    "api-gateway",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["FidelCoder"]
+
+[workspace.dependencies]
+# Async runtime
+tokio = { version = "1.35", features = ["full"] }
+tokio-util = "0.7"
+
+# Web framework
+axum = { version = "0.7", features = ["macros", "ws"] }
+tower = "0.4"
+tower-http = { version = "0.5", features = ["cors", "trace"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Database
+sqlx = { version = "0.7", features = ["runtime-tokio", "postgres", "uuid", "chrono", "migrate"] }
+
+# Ethereum/Arc
+ethers = { version = "2.0", features = ["legacy", "ws", "rustls"] }
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# Configuration
+config = "0.14"
+dotenvy = "0.15"
+
+# Utilities
+uuid = { version = "1.6", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+reqwest = { version = "0.11", features = ["json", "rustls-tls"] }
+
+# Redis
+redis = { version = "0.24", features = ["tokio-comp", "connection-manager"] }
+
+# Kafka
+rdkafka = { version = "0.36", features = ["cmake-build"] }
+
+# JWT
+jsonwebtoken = "9.2"
+
+# HTTP client
+url = "2.5"
+
+# Metrics
+prometheus = "0.13"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+
