@@ -3,6 +3,9 @@
 .env.local
 .env.*.local
 
+# Cursor IDE
+.cursorrules
+
 # Rust
 target/
 **/*.rs.bk
